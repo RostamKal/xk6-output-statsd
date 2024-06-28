@@ -112,11 +112,7 @@ func (o *Output) Start() error {
 		return err
 	}
 
-	o.client, err = statsd.New(
-		o.config.Addr.String, 
-		statsd.WithNamespace(o.config.Namespace.String)
-		statsd.WithClientSideAggregation()
-	)
+	o.client, err = statsd.New(o.config.Addr.String, statsd.WithNamespace(o.config.Namespace.String),statsd.WithClientSideAggregation())
 
 	if err != nil {
 		o.logger.Errorf("Couldn't make buffered client, %s", err)
