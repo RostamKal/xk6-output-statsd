@@ -61,7 +61,7 @@ func (o *Output) dispatch(entry metrics.Sample) error {
 				fmt.Printf("%v\n", o.reqCounter)
 			}
 			
-			o.client.Gauge("http_req_guage", float64(o.reqCounter), tagList, 1)
+			o.client.Gauge("http_req_gauge", float64(o.reqCounter), tagList, 1)
 		}
 		return o.client.Count(entry.Metric.Name, int64(entry.Value), tagList, 1)
 	case metrics.Trend:
@@ -112,7 +112,11 @@ func (o *Output) Start() error {
 		return err
 	}
 
-	o.client, err = statsd.New(o.config.Addr.String, statsd.WithNamespace(o.config.Namespace.String))
+	o.client, err = statsd.New(
+		o.config.Addr.String, 
+		statsd.WithNamespace(o.config.Namespace.String)
+		statsd.WithClientSideAggregation()
+	)
 
 	if err != nil {
 		o.logger.Errorf("Couldn't make buffered client, %s", err)
